@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <div class="checkbox pull-right">
                     <label>
-                        <a class="forget" href="forget_password.php" title="forget">Lupa Password</a>
+                        <a class="forget" href="https://app-bbe844c1-019b-46dc-bca4-617791f3953e.cleverapps.io/forgot-password" title="forget">Lupa Password</a>
                     </label>
                 </div>
             </form>
