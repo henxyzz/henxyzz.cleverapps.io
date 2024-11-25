@@ -1,6 +1,6 @@
 <?php
 // Termasuk file konfigurasi database
-include('config.php');
+include('./config/config.php');
 
 // Inisialisasi pesan error
 $error_message = '';

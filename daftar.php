@@ -1,6 +1,6 @@
 <?php
 // Koneksi ke database
-include('config.php'); // Pastikan file konfigurasi ini mengandung informasi koneksi ke database
+include('./config/config.php'); // Pastikan file konfigurasi ini mengandung informasi koneksi ke database
 
 // Cek jika form telah disubmit
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

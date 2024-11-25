@@ -1,18 +1,18 @@
 <?php
-// config.php
-
 // Konfigurasi database
-define('DB_HOST', 'bh6hv9q2mgchpfwokhra-mysql.services.clever-cloud.com');
-define('DB_NAME', 'bh6hv9q2mgchpfwokhra');
-define('DB_USER', 'uilgi5oa7qkxpkd7');
-define('DB_PASSWORD', 'zE5zGMZXcqIbTq8oItr');
-define('DB_PORT', '21755');
+$host = "bh6hv9q2mgchpfwokhra-mysql.services.clever-cloud.com";
+$port = "21755"; // Port MySQL (opsional)
+$username = "uilgi5oa7qkxpkd7";
+$password = "zE5zGMZXcqIbTq8oItr";
+$database = "bh6hv9q2mgchpfwokhra";
 
-// Koneksi ke database MySQL menggunakan PDO
-try {
-    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";port=" . DB_PORT, DB_USER, DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Koneksi gagal: " . $e->getMessage());
+// Membuat koneksi
+$conn = new mysqli($host, $username, $password, $database, $port);
+
+// Memeriksa koneksi
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
 }
+
+echo "Berhasil terhubung";
 ?>

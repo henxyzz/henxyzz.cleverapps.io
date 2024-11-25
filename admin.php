@@ -1,7 +1,7 @@
 <?php
 // admin.php
 
-include('config.php');
+include('./config/config.php');
 
 // Memulai sesi
 session_start();
