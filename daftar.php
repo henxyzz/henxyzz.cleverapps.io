@@ -51,12 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="./style_script/daflog.css">
 </head>
-<body class="daftar">
+<body class="login">
   <div id="particles-js"></div>
   <div class="container">
-    <div class="daftar-container-wrapper clearfix">
+    <div class="login-container-wrapper clearfix">
       <div class="logo">
-        <i class="fa fa-user-plus"></i>
+        <i class="fa fa-sign-in"></i>
       </div>
       <div class="welcome"><strong>Buat Akun Baru</strong></div>
       <?php if (isset($error_message)): ?>
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <?php if (isset($success_message)): ?>
         <div class="alert alert-success"><?= $success_message; ?></div>
       <?php endif; ?>
-      <form class="form-horizontal daftar-form" method="POST">
+      <form class="form-horizontal login-form" method="POST">
         <div class="form-group relative">
           <input name="username" class="form-control input-lg" type="text" placeholder="Username" required>
           <i class="fa fa-user"></i>
@@ -74,11 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           <input name="email" class="form-control input-lg" type="email" placeholder="Email" required>
           <i class="fa fa-envelope"></i>
         </div>
-        <div class="form-group relative">
+        <div class="form-group relative password">
           <input name="password" class="form-control input-lg" type="password" placeholder="Password" required>
           <i class="fa fa-lock"></i>
         </div>
-        <div class="form-group relative">
+        <div class="form-group relative password">
           <input name="confirm_password" class="form-control input-lg" type="password" placeholder="Konfirmasi Password" required>
           <i class="fa fa-lock"></i>
         </div>
