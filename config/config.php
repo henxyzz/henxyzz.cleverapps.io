@@ -12,7 +12,5 @@ $conn = new mysqli($host, $username, $password, $database, $port);
 // Memeriksa koneksi
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
-}
-
-echo "Berhasil terhubung";
+};
 ?>
