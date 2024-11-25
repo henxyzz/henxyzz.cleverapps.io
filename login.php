@@ -42,10 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Blue Login Page</title>
+    <title>LOGIN</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="daflog.css">
+    <link rel="stylesheet" href="./style_script/daflog.css">
 </head>
 <body class="login">
     <div id="particles-js"></div>
@@ -89,6 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="daflog.js"></script>
+    <script src="./style_script/daflog.js"></script>
 </body>
 </html>
