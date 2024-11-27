@@ -18,6 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Hash password
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+        // Generate token acak
+        $token = bin2hex(random_bytes(32)); // Token sepanjang 64 karakter heksadesimal
+
         // Cek apakah email sudah terdaftar
         $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
@@ -28,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error_message = "Email sudah terdaftar.";
         } else {
             // Insert data pengguna baru ke database
-            $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $username, $email, $hashed_password);
+            $stmt = $conn->prepare("INSERT INTO users (username, email, password, token) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $username, $email, $hashed_password, $token);
             if ($stmt->execute()) {
                 $success_message = "Akun Anda berhasil dibuat. Silakan masuk.";
                 header("Location: login.php"); // Redirect ke halaman login setelah berhasil daftar
@@ -83,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           <i class="fa fa-lock"></i>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Daftar</button>
+          <button type="submit" class="btn btn-success btn-lg btn-block">Daftar</button>
         </div>
       </form>
     </div>

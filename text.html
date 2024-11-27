@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Henxyzz">
+    <meta name="description" content="Portal AI untuk download video dan musik gratis dari berbagai platform media sosial.">
+    <title>Portal AI - Downloader Video & Musik</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Navbar Slide */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #007BFF;
+            transition: 0.3s;
+            padding-top: 60px;
+        }
+
+        .navbar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: #0056b3;
+        }
+
+        .openbtn {
+            font-size: 30px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 16px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+        }
+
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main Content */
+        header {
+            text-align: center;
+            padding: 3rem;
+            background-color: #fff;
+            margin-top: 60px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            color: #007BFF;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .main-content {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .main-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .main-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="myNavbar" class="navbar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#home">Home</a>
+        <a href="#downloader">Downloader</a>
+        <a href="#tentang">Tentang</a>
+        <a href="#kontak">Kontak</a>
+    </div>
+
+    <!-- Button to open the slide navbar -->
+    <button class="openbtn" onclick="openNav()">☰</button>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Portal AI - Downloader Video & Musik</h1>
+        <p>Unduh video dan musik gratis dari berbagai platform media sosial.</p>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content" id="home">
+        <h2>Selamat datang di Portal AI!</h2>
+        <p>Gunakan alat canggih kami untuk mendownload video dan musik favorit Anda secara gratis dari platform seperti TikTok, Instagram, YouTube, dan lainnya!</p>
+        <p>Jelajahi fitur downloader kami sekarang!</p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Henxyzz - Semua Hak Dilindungi</p>
+    </footer>
+
+    <script>
+        /* Fungsi untuk membuka dan menutup navbar slide */
+        function openNav() {
+            document.getElementById("myNavbar").style.left = "0";
+        }
+
+        function closeNav() {
+            document.getElementById("myNavbar").style.left = "-250px";
+        }
+    </script>
+</body>
+</html>
