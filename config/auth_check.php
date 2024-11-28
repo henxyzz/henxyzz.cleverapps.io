@@ -1,6 +1,6 @@
 <?php
 // Termasuk file konfigurasi database
-include('config.php');
+include('config.php'); // Pastikan file ini berada di folder yang sama dengan auth_check.php
 
 // Memulai sesi jika belum dimulai
 if (session_status() == PHP_SESSION_NONE) {
@@ -9,7 +9,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Jika pengguna sudah login melalui session, arahkan ke navbar.php
 if (isset($_SESSION['user_id'])) {
-    header('Location: navbar.php');
+    header('Location: ../utama/navbar.php'); // Path relatif dari folder config ke navbar.php
     exit();
 }
 
@@ -40,7 +40,7 @@ if (isset($_COOKIE['remember_me'])) {
         setcookie('remember_me', $newToken, $expireTime, '/', '', false, true);
 
         // Redirect ke navbar.php
-        header('Location: navbar.php');
+        header('Location: ../utama/navbar.php'); // Path relatif dari folder config ke navbar.php
         exit();
     }
 }
