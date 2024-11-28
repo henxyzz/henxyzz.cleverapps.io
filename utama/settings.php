@@ -25,28 +25,6 @@ if (isset($_GET['logout'])) {
     header('Location: https://henxyz.cleverapps.io');
     exit();
 }
-
-// Fungsi untuk mengganti password
-if (isset($_POST['change_password'])) {
-    $currentPassword = $_POST['current_password'];
-    $newPassword = $_POST['new_password'];
-
-    // Verifikasi password lama
-    if (password_verify($currentPassword, $user['password'])) {
-        // Hash password baru
-        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-
-        // Update password di database
-        $updateSql = "UPDATE users SET password = ? WHERE id = ?";
-        $updateStmt = $conn->prepare($updateSql);
-        $updateStmt->bind_param('si', $hashedPassword, $userId);
-        $updateStmt->execute();
-
-        $message = "Password berhasil diperbarui!";
-    } else {
-        $message = "Password lama salah!";
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +43,7 @@ if (isset($_POST['change_password'])) {
             padding: 20px;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background: #fff;
@@ -145,8 +123,15 @@ if (isset($_POST['change_password'])) {
 
         <!-- Detail Profil -->
         <h3>Detail Akun</h3>
-        <p>Email: <?php echo $user['email']; ?></p>
-        <p>Password: <span id="password-text"><?php echo $user['password']; ?></span> <i class="fa fa-eye" id="toggle-password" onclick="togglePassword()"></i></p>
+        <p><strong>ID Pengguna:</strong> <?php echo $user['id']; ?></p>
+        <p><strong>Username:</strong> <?php echo $user['username']; ?></p>
+        <p><strong>Email:</strong> <?php echo $user['email']; ?></p>
+        <p><strong>Password:</strong> <span id="password-text"><?php echo $user['password']; ?></span> 
+            <i class="fa fa-eye" id="toggle-password" onclick="togglePassword()"></i>
+        </p>
+        <p><strong>Token:</strong> <?php echo $user['token'] ? $user['token'] : 'Tidak ada token'; ?></p>
+        <p><strong>Dibuat pada:</strong> <?php echo $user['created_at']; ?></p>
+        <p><strong>Terakhir diperbarui:</strong> <?php echo $user['updated_at']; ?></p>
 
         <!-- Tombol Ganti Password -->
         <button id="showPasswordFormBtn" class="btn">Ganti Password</button>

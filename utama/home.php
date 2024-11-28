@@ -200,101 +200,83 @@ $serverStats = getServerStats();
 </div>
 
 <script>
-    // Data server
-    var serverData = <?php echo json_encode([
-        'cpuLoad' => $serverStats['cpuLoad'],
-        'memUsedPercent' => $serverStats['memUsedPercent'],
-        'diskUsedPercent' => $serverStats['diskUsedPercent']
-    ]); ?>;
+    // Menyimpan data historis untuk grafik
+    let diskData = [];
+    let memData = [];
+    let cpuData = [];
 
-    // Grafik Penggunaan Disk
-    var diskCtx = document.getElementById('diskChart').getContext('2d');
-    var diskChart = new Chart(diskCtx, {
-        type: 'line',
-        data: {
-            labels: ['Disk'], // Hanya satu titik waktu
-            datasets: [{
-                label: 'Disk Usage',
-                data: [serverData.diskUsedPercent],
-                borderColor: '#4CAF50',
-                backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    min: 0,
-                    max: 100
-                }
-            }
-        }
-    });
+    function updateData() {
+        // Menambahkan data baru ke grafik
+        const serverStats = <?php echo json_encode(getServerStats()); ?>;
 
-    // Grafik Penggunaan Memori
-    var memCtx = document.getElementById('memChart').getContext('1d');
-    var memChart = new Chart(memCtx, {
-        type: 'line',
-        data: {
-            labels: ['Memory'], // Hanya satu titik waktu
-            datasets: [{
-                label: 'Memory Usage',
-                data: [serverData.memUsedPercent],
-                borderColor: '#FF9800',
-                backgroundColor: 'rgba(255, 152, 0, 0.2)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    min: 0,
-                    max: 100
-                }
-            }
-        }
-    });
+        // Disk, Memori, dan CPU baru
+        const newDiskData = serverStats['diskUsedPercent'];
+        const newMemData = serverStats['memUsedPercent'];
+        const newCpuData = serverStats['cpuLoad'];
 
-    // Grafik Penggunaan CPU
-    var cpuCtx = document.getElementById('cpuChart').getContext('1d');
-    var cpuChart = new Chart(cpuCtx, {
-        type: 'line',
-        data: {
-            labels: ['CPU'], // Hanya satu titik waktu
-            datasets: [{
-                label: 'CPU Load',
-                data: [serverData.cpuLoad],
-                borderColor: '#2196F3',
-                backgroundColor: 'rgba(33, 150, 243, 0.2)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    min: 0,
-                    max: 100
-                }
-            }
-        }
-    });
+        // Menyimpan data
+        diskData.push(newDiskData);
+        memData.push(newMemData);
+        cpuData.push(newCpuData);
 
-    // Update Jam Digital Setiap Detik
-    function updateClock() {
-        var now = new Date();
-        var hours = now.getHours().toString().padStart(2, '0');
-        var minutes = now.getMinutes().toString().padStart(2, '0');
-        var seconds = now.getSeconds().toString().padStart(2, '0');
-        document.getElementById('clock').innerHTML = hours + ':' + minutes + ':' + seconds;
+        // Hanya menyimpan 30 data terakhir untuk grafik
+        if (diskData.length > 30) diskData.shift();
+        if (memData.length > 30) memData.shift();
+        if (cpuData.length > 30) cpuData.shift();
+
+        // Update grafik dengan data terbaru
+        diskChart.data.labels.push('');
+        memChart.data.labels.push('');
+        cpuChart.data.labels.push('');
+
+        diskChart.data.datasets[0].data = diskData;
+        memChart.data.datasets[0].data = memData;
+        cpuChart.data.datasets[0].data = cpuData;
+
+        // Update grafik
+        diskChart.update();
+        memChart.update();
+        cpuChart.update();
     }
 
-    setInterval(updateClock, 1000); // Memperbarui jam setiap detik
+    // Grafik Penggunaan CPU secara live
+        setInterval(function() {
+            // Mengambil data baru dari server (dapat diperbarui melalui AJAX atau sumber data lain)
+            fetch('./config/get_server_stats.php')
+                .then(response => response.json())
+                .then(data => {
+                    // Memperbarui data grafik setiap detik
+                    diskChart.data.datasets[0].data.push(data.diskUsedPercent);
+                    memChart.data.datasets[0].data.push(data.memUsedPercent);
+                    cpuChart.data.datasets[0].data.push(data.cpuLoad);
+
+                    // Hanya simpan data terbaru dalam grafik
+                    if (diskChart.data.datasets[0].data.length > 10) {
+                        diskChart.data.datasets[0].data.shift();
+                        memChart.data.datasets[0].data.shift();
+                        cpuChart.data.datasets[0].data.shift();
+                    }
+
+                    // Memperbarui grafik dengan data terbaru
+                    diskChart.update();
+                    memChart.update();
+                    cpuChart.update();
+                });
+        }, 1000); // Setiap 1 detik
+
+        // Fungsi untuk mendapatkan data server baru
+        function fetchServerData() {
+            fetch('./config/get_server_stats.php')
+                .then(response => response.json())
+                .then(data => {
+                    // Update serverData di client-side
+                    serverData.cpuLoad = data.cpuLoad;
+                    serverData.memUsedPercent = data.memUsedPercent;
+                    serverData.diskUsedPercent = data.diskUsedPercent;
+                });
+        }
+
+        setInterval(fetchServerData, 1000); // Memperbarui data setiap detik
 </script>
 
 </body>
