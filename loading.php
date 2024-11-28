@@ -435,7 +435,7 @@
   <script>
         // Fungsi untuk mengalihkan ke file.html setelah 6 detik
         setTimeout(function() {
-            window.location.href = "menu.php";
+            window.location.href = "./utama/navbar.php";
         }, 8000);
   </script>
 <!-- partial -->

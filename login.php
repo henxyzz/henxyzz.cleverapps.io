@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['username'] = $user['username'];
 
         // Redirect ke dashboard
-        header('Location: menu.php');
+        header('Location: loading.php');
         exit();
     } else {
         // Login gagal
