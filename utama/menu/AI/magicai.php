@@ -90,7 +90,7 @@ if (!isset($_SESSION['history'])) {
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
             $message = htmlspecialchars(trim($_POST['message'])); // Mengamankan input pengguna
-            $url = "https://api.agatz.xyz/api/magicstudio?message=" . urlencode($message);
+            $url = "https://fongsi-scraper-rest-api.koyeb.app/text-to-image-v4?prompt=" . urlencode($message);
 
             // Mengambil gambar dari API
             $response = file_get_contents($url);
@@ -137,4 +137,4 @@ if (!isset($_SESSION['history'])) {
     </script>
 
 </body>
-</html>ml>
+</html>

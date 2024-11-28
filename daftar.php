@@ -1,4 +1,7 @@
 <?php
+
+include('./config/auth_check.php');
+
 // Koneksi ke database
 include('./config/config.php'); // Pastikan file konfigurasi ini mengandung informasi koneksi ke database
 

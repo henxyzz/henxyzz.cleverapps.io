@@ -1,3 +1,9 @@
+<?php
+include('./config/auth_check.php');
+
+// Sisa kode loading.php
+?>
+
 <!DOCTYPE html>
 <html lang="en" >
 <head>

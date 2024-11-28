@@ -1,4 +1,12 @@
 <?php
+
+include('./config/auth_check.php');
+
+// Memeriksa apakah file konfigurasi tersedia
+if (!file_exists('./config/config.php')) {
+    die('File konfigurasi tidak ditemukan.');
+}
+
 // Termasuk file konfigurasi database
 include('./config/config.php');
 
@@ -10,13 +18,18 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Memeriksa jika form login disubmit
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+// Memeriksa apakah form login disubmit
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-    // Query mencari user berdasarkan username
-    $stmt = $conn->prepare('SELECT * FROM users WHERE username = ?');
+    // Pastikan koneksi database tersedia
+    if (!isset($conn)) {
+        die('Koneksi database tidak tersedia.');
+    }
+
+    // Query untuk mencari user berdasarkan username
+    $stmt = $conn->prepare('SELECT id, username, password FROM users WHERE username = ?');
     $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -28,6 +41,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
 
+        // Jika checkbox "Ingat Saya" dicentang
+        if (isset($_POST['remember_me'])) {
+            $token = bin2hex(random_bytes(16)); // Token unik untuk cookie
+            $expireTime = time() + (30 * 24 * 60 * 60); // 30 hari
+
+            // Simpan token ke database
+            $stmt = $conn->prepare('UPDATE users SET remember_token = ? WHERE id = ?');
+            $stmt->bind_param('si', $token, $user['id']);
+            $stmt->execute();
+
+            // Simpan cookie di browser
+            setcookie('remember_me', $token, $expireTime, '/', '', false, true);
+        }
+
         // Redirect ke dashboard
         header('Location: loading.php');
         exit();
@@ -36,12 +63,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error_message = 'Username atau password salah.';
     }
 }
+
+// Memeriksa jika user sudah login melalui cookie
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
+    $token = $_COOKIE['remember_me'];
+
+    // Validasi token dengan database
+    $stmt = $conn->prepare('SELECT id, username FROM users WHERE remember_token = ?');
+    $stmt->bind_param('s', $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if ($user) {
+        // Login otomatis jika token valid
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+
+        // Perbarui cookie dengan token baru untuk keamanan
+        $newToken = bin2hex(random_bytes(16));
+        $expireTime = time() + (30 * 24 * 60 * 60);
+
+        $stmt = $conn->prepare('UPDATE users SET remember_token = ? WHERE id = ?');
+        $stmt->bind_param('si', $newToken, $user['id']);
+        $stmt->execute();
+
+        setcookie('remember_me', $newToken, $expireTime, '/', '', false, true);
+
+        // Redirect ke dashboard
+        header('Location: loading.php');
+        exit();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Henxyzz">
+    <meta name="description" content="Login to Portal AI.">
+    <meta name="keywords" content="Login page">
     <title>LOGIN</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -74,11 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="submit" class="btn btn-success btn-lg btn-block">Masuk</button>
                 </div>
                 <div class="checkbox pull-left">
-                    <label><input type="checkbox"> Ingat saya</label>
+                    <label>
+                        <input type="checkbox" name="remember_me"> Ingat saya
+                    </label>
                 </div>
                 <div class="checkbox pull-right">
                     <label>
-                        <a class="forget" href="https://app-bbe844c1-019b-46dc-bca4-617791f3953e.cleverapps.io/forgot-password" title="forget">Lupa Password</a>
+                        <a class="forget" href="https://app-bbe844c1-019b-46dc-bca4-617791f3953e.cleverapps.io/forgot-password" title="Lupa Password">Lupa Password</a>
                     </label>
                 </div>
             </form>

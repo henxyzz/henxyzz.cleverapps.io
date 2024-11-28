@@ -1,4 +1,7 @@
 <?php
+
+include('./config/auth_check.php');
+
 // File untuk menyimpan data total pengunjung
 $counterFile = "counter.txt";
 
