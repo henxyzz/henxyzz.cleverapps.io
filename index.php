@@ -29,7 +29,7 @@ file_put_contents($counterFile, (string) $totalVisitors);
     <!-- SEO and Social Media -->
     <meta property="og:title" content="Welcome to Portal AI">
     <meta property="og:description" content="Portal AI: Platform lengkap untuk downloader, search, chatbot, dan tools inovatif lainnya. Gratis 100%!">
-    <meta property="og:image" content="images/logo1.png">
+    <meta property="og:image" content="images/logo1.jpg">
     <meta property="og:url" content="https://henxyz.cleverapps.io">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Welcome to Portal AI">
