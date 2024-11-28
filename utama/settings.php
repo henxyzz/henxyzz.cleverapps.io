@@ -1,6 +1,6 @@
 <?php
 // Termasuk file konfigurasi database
-include('config.php');
+include('./config/config.php');
 
 // Memulai sesi jika belum dimulai
 if (session_status() == PHP_SESSION_NONE) {

@@ -56,6 +56,7 @@ if ($locationData && $locationData->status === 'success') {
 // Ambil waktu sekarang untuk jam digital
 $currentTime = date('H:i:s');
 
+// Mendapatkan statistik server
 $serverStats = getServerStats();
 ?>
 
@@ -100,6 +101,8 @@ $serverStats = getServerStats();
         .digital-clock {
             font-size: 2rem;
             margin-bottom: 30px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out infinite;
         }
         /* Media Queries for Responsiveness */
         @media (max-width: 768px) {
@@ -111,6 +114,22 @@ $serverStats = getServerStats();
                 font-size: 1.5rem;
             }
         }
+        /* Smooth transition for widgets */
+        .widget .progress {
+            transition: width 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -119,9 +138,9 @@ $serverStats = getServerStats();
     <div class="card">
         <h2 class="text-center">Dashboard</h2>
 
-        <!-- Jam Digital -->
-        <div class="digital-clock text-center">
-            <h3>Jam Digital: <?php echo $currentTime; ?></h3>
+        <!-- Jam Digital dengan animasi -->
+        <div class="digital-clock">
+            <h3>Jam Digital: <span id="clock"><?php echo $currentTime; ?></span></h3>
         </div>
 
         <div class="row widget">
@@ -179,6 +198,17 @@ $serverStats = getServerStats();
         </div>
     </div>
 </div>
+
+<script>
+    // Update Jam Digital setiap detik
+    setInterval(function() {
+        var currentTime = new Date();
+        var hours = currentTime.getHours().toString().padStart(2, '0');
+        var minutes = currentTime.getMinutes().toString().padStart(2, '0');
+        var seconds = currentTime.getSeconds().toString().padStart(2, '0');
+        document.getElementById("clock").textContent = hours + ":" + minutes + ":" + seconds;
+    }, 1000);
+</script>
 
 </body>
 </html>
