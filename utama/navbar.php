@@ -125,9 +125,9 @@ if (!isset($_SESSION['user_id'])) {
             document.documentElement.msRequestFullscreen();
         }
 
-        // Kunci orientasi layar agar tetap vertikal atau sesuai kebutuhan
+        // Kunci orientasi layar agar tetap portrait
         if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('landscape').catch(function(error) {
+            screen.orientation.lock('portrait').catch(function(error) {
                 console.error("Unable to lock orientation: " + error);
             });
         }
@@ -138,6 +138,9 @@ if (!isset($_SESSION['user_id'])) {
         goFullScreen();
     }
 </script>
+
+</body>
+</html>cript>
 
 </body>
 </html>
