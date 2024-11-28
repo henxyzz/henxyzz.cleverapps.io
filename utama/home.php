@@ -10,28 +10,40 @@ if (!isset($_SESSION['user_id'])) {
 
 // Fungsi untuk mendapatkan informasi sistem
 function getServerStats() {
-    // Status Penyimpanan
+    // Status Penyimpanan dalam GB
     $diskFree = disk_free_space("/");
     $diskTotal = disk_total_space("/");
     $diskUsed = $diskTotal - $diskFree;
+    
+    // Menghitung penyimpanan dalam GB
+    $diskUsedGB = round($diskUsed / (1024 * 1024 * 1024), 2);
+    $diskTotalGB = round($diskTotal / (1024 * 1024 * 1024), 2);
     $diskUsedPercent = round(($diskUsed / $diskTotal) * 100, 2);
 
-    // Penggunaan Memori
+    // Penggunaan Memori dalam MB
     $memTotal = memory_get_usage(true);
     $memUsed = memory_get_usage();
+    
+    // Menghitung penggunaan memori dalam MB
+    $memUsedMB = round($memUsed / 1024 / 1024, 2);
+    $memTotalMB = round($memTotal / 1024 / 1024, 2);
     $memUsedPercent = round(($memUsed / $memTotal) * 100, 2);
 
     // CPU Usage
     $cpuLoad = sys_getloadavg();
 
     return [
+        'diskUsedGB' => $diskUsedGB,
+        'diskTotalGB' => $diskTotalGB,
         'diskUsedPercent' => $diskUsedPercent,
+        'memUsedMB' => $memUsedMB,
+        'memTotalMB' => $memTotalMB,
         'memUsedPercent' => $memUsedPercent,
         'cpuLoad' => $cpuLoad[0], // Mengambil nilai load rata-rata 1 menit
     ];
 }
 
-// Mendapatkan IP pengunjung dan lokasi (menggunakan API untuk lokasi)
+// Mendapatkan IP pengunjung dan lokasi (menggunakan API untuk lokasi berdasarkan IP)
 $ip = $_SERVER['REMOTE_ADDR'];
 $location = "Unknown"; // Default lokasi jika tidak ditemukan
 
@@ -60,7 +72,8 @@ $serverStats = getServerStats();
         body {
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
-            padding: 50px;
+            padding: 20px;
+            color: #fff;
         }
         .card {
             background: rgba(255, 255, 255, 0.2);
@@ -71,17 +84,32 @@ $serverStats = getServerStats();
         }
         .widget {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             margin-bottom: 20px;
         }
         .widget .col-md-4 {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         .widget h4 {
             color: #fff;
         }
         .widget .progress-bar {
             background-color: #4CAF50;
+        }
+        .digital-clock {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .widget {
+                flex-direction: column;
+                align-items: center;
+            }
+            .digital-clock {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -92,7 +120,7 @@ $serverStats = getServerStats();
         <h2 class="text-center">Dashboard</h2>
 
         <!-- Jam Digital -->
-        <div class="text-center mb-4">
+        <div class="digital-clock text-center">
             <h3>Jam Digital: <?php echo $currentTime; ?></h3>
         </div>
 
@@ -100,6 +128,7 @@ $serverStats = getServerStats();
             <!-- Widget Status Penyimpanan -->
             <div class="col-md-4">
                 <h4>Status Penyimpanan</h4>
+                <p><?php echo $serverStats['diskUsedGB']; ?> GB / <?php echo $serverStats['diskTotalGB']; ?> GB</p>
                 <div class="progress">
                     <div class="progress-bar" style="width: <?php echo $serverStats['diskUsedPercent']; ?>%" role="progressbar" aria-valuenow="<?php echo $serverStats['diskUsedPercent']; ?>" aria-valuemin="0" aria-valuemax="100">
                         <?php echo $serverStats['diskUsedPercent']; ?>% digunakan
@@ -110,6 +139,7 @@ $serverStats = getServerStats();
             <!-- Widget Penggunaan Memori -->
             <div class="col-md-4">
                 <h4>Penggunaan Memori</h4>
+                <p><?php echo $serverStats['memUsedMB']; ?> MB / <?php echo $serverStats['memTotalMB']; ?> MB</p>
                 <div class="progress">
                     <div class="progress-bar" style="width: <?php echo $serverStats['memUsedPercent']; ?>%" role="progressbar" aria-valuenow="<?php echo $serverStats['memUsedPercent']; ?>" aria-valuemin="0" aria-valuemax="100">
                         <?php echo $serverStats['memUsedPercent']; ?>% digunakan

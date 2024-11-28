@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>PORTAL AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -96,6 +96,7 @@ if (!isset($_SESSION['user_id'])) {
 </nav>
 
 <script>
+    // Fungsi untuk memuat halaman ke dalam iframe
     function loadPage(event, page) {
         event.preventDefault();
 
@@ -107,8 +108,26 @@ if (!isset($_SESSION['user_id'])) {
         menus.forEach(menu => menu.classList.remove('active'));
         event.currentTarget.classList.add('active');
     }
+
+    // Fungsi untuk meminta fullscreen secara otomatis ketika halaman dimuat
+    function goFullScreen() {
+        // Mengecek apakah fullscreen tersedia dan jika iya, memasukannya
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari dan Opera
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+            document.documentElement.msRequestFullscreen();
+        }
+    }
+
+    // Meminta fullscreen saat halaman pertama kali dimuat
+    window.onload = function() {
+        goFullScreen();
+    }
 </script>
 
 </body>
-</html>
 </html>
