@@ -200,84 +200,114 @@ $serverStats = getServerStats();
 </div>
 
 <script>
-    // Menyimpan data historis untuk grafik
-    let diskData = [];
-    let memData = [];
-    let cpuData = [];
-
-    function updateData() {
-        // Menambahkan data baru ke grafik
-        const serverStats = <?php echo json_encode(getServerStats()); ?>;
-
-        // Disk, Memori, dan CPU baru
-        const newDiskData = serverStats['diskUsedPercent'];
-        const newMemData = serverStats['memUsedPercent'];
-        const newCpuData = serverStats['cpuLoad'];
-
-        // Menyimpan data
-        diskData.push(newDiskData);
-        memData.push(newMemData);
-        cpuData.push(newCpuData);
-
-        // Hanya menyimpan 30 data terakhir untuk grafik
-        if (diskData.length > 30) diskData.shift();
-        if (memData.length > 30) memData.shift();
-        if (cpuData.length > 30) cpuData.shift();
-
-        // Update grafik dengan data terbaru
-        diskChart.data.labels.push('');
-        memChart.data.labels.push('');
-        cpuChart.data.labels.push('');
-
-        diskChart.data.datasets[0].data = diskData;
-        memChart.data.datasets[0].data = memData;
-        cpuChart.data.datasets[0].data = cpuData;
-
-        // Update grafik
-        diskChart.update();
-        memChart.update();
-        cpuChart.update();
-    }
-
-    // Grafik Penggunaan CPU secara live
-        setInterval(function() {
-            // Mengambil data baru dari server (dapat diperbarui melalui AJAX atau sumber data lain)
-            fetch('./config/get_server_stats.php')
-                .then(response => response.json())
-                .then(data => {
-                    // Memperbarui data grafik setiap detik
-                    diskChart.data.datasets[0].data.push(data.diskUsedPercent);
-                    memChart.data.datasets[0].data.push(data.memUsedPercent);
-                    cpuChart.data.datasets[0].data.push(data.cpuLoad);
-
-                    // Hanya simpan data terbaru dalam grafik
-                    if (diskChart.data.datasets[0].data.length > 10) {
-                        diskChart.data.datasets[0].data.shift();
-                        memChart.data.datasets[0].data.shift();
-                        cpuChart.data.datasets[0].data.shift();
-                    }
-
-                    // Memperbarui grafik dengan data terbaru
-                    diskChart.update();
-                    memChart.update();
-                    cpuChart.update();
-                });
-        }, 1000); // Setiap 1 detik
-
-        // Fungsi untuk mendapatkan data server baru
-        function fetchServerData() {
-            fetch('./config/get_server_stats.php')
-                .then(response => response.json())
-                .then(data => {
-                    // Update serverData di client-side
-                    serverData.cpuLoad = data.cpuLoad;
-                    serverData.memUsedPercent = data.memUsedPercent;
-                    serverData.diskUsedPercent = data.diskUsedPercent;
-                });
+    // Mendefinisikan grafik disk, memori, dan CPU
+    let diskChart = new Chart(document.getElementById('diskChart'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Penggunaan Disk (%)',
+                data: [],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
+    });
 
-        setInterval(fetchServerData, 1000); // Memperbarui data setiap detik
+    let memChart = new Chart(document.getElementById('memChart'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Penggunaan Memori (%)',
+                data: [],
+                borderColor: 'rgba(153, 102, 255, 1)',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    let cpuChart = new Chart(document.getElementById('cpuChart'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Penggunaan CPU (%)',
+                data: [],
+                borderColor: 'rgba(255, 159, 64, 1)',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    setInterval(function() {
+        fetch('./config/get_server_stats.php')
+            .then(response => response.json())
+            .then(data => {
+                // Update data chart untuk disk
+                const currentDiskData = data.diskUsedPercent;
+                if (diskChart.data.labels.length >= 10) {
+                    diskChart.data.labels.shift();  // Hapus label lama
+                    diskChart.data.datasets[0].data.shift();  // Hapus data lama
+                }
+                diskChart.data.labels.push(new Date().toLocaleTimeString());
+                diskChart.data.datasets[0].data.push(currentDiskData);
+                diskChart.update();
+
+                // Update data chart untuk memori
+                const currentMemData = data.memUsedPercent;
+                if (memChart.data.labels.length >= 10) {
+                    memChart.data.labels.shift();
+                    memChart.data.datasets[0].data.shift();
+                }
+                memChart.data.labels.push(new Date().toLocaleTimeString());
+                memChart.data.datasets[0].data.push(currentMemData);
+                memChart.update();
+
+                // Update data chart untuk CPU
+                const currentCpuData = data.cpuLoad;
+                if (cpuChart.data.labels.length >= 10) {
+                    cpuChart.data.labels.shift();
+                    cpuChart.data.datasets[0].data.shift();
+                }
+                cpuChart.data.labels.push(new Date().toLocaleTimeString());
+                cpuChart.data.datasets[0].data.push(currentCpuData);
+                cpuChart.update();
+            })
+            .catch(error => console.error('Error:', error));
+    }, 1000);  // Update setiap 1 detik
+
+    // Menampilkan waktu digital di halaman
+    function updateClock() {
+        const clockElement = document.getElementById('clock');
+        const currentTime = new Date().toLocaleTimeString();
+        clockElement.textContent = currentTime;
+    }
+    setInterval(updateClock, 1000); // Update waktu setiap detik
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
