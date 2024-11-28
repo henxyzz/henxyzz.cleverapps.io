@@ -66,41 +66,53 @@ $serverStats = getServerStats();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Glassmorphism Theme */
         body {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
             padding: 20px;
             color: #fff;
+            font-family: 'Arial', sans-serif;
         }
         .card {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .card h2 {
+            font-size: 2rem;
+            color: #0f9b8e;
         }
         .widget {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            justify-content: space-around;
+            margin-bottom: 30px;
         }
         .widget .col-md-4 {
-            margin-bottom: 15px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .widget .col-md-4:hover {
+            transform: scale(1.05);
         }
         .widget h4 {
-            color: #fff;
+            color: #0f9b8e;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
         }
         .widget .progress-bar {
             background-color: #4CAF50;
         }
         .digital-clock {
-            font-size: 2rem;
-            margin-bottom: 30px;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
             text-align: center;
             animation: fadeIn 1s ease-in-out infinite;
         }
@@ -111,7 +123,7 @@ $serverStats = getServerStats();
                 align-items: center;
             }
             .digital-clock {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
         }
         /* Smooth transition for widgets */
@@ -124,7 +136,7 @@ $serverStats = getServerStats();
                 opacity: 0;
             }
             50% {
-                opacity: 0.5;
+                opacity: 0.6;
             }
             100% {
                 opacity: 1;
@@ -148,32 +160,20 @@ $serverStats = getServerStats();
             <div class="col-md-4">
                 <h4>Status Penyimpanan</h4>
                 <p><?php echo $serverStats['diskUsedGB']; ?> GB / <?php echo $serverStats['diskTotalGB']; ?> GB</p>
-                <div class="progress">
-                    <div class="progress-bar" style="width: <?php echo $serverStats['diskUsedPercent']; ?>%" role="progressbar" aria-valuenow="<?php echo $serverStats['diskUsedPercent']; ?>" aria-valuemin="0" aria-valuemax="100">
-                        <?php echo $serverStats['diskUsedPercent']; ?>% digunakan
-                    </div>
-                </div>
+                <canvas id="diskChart" width="400" height="400"></canvas>
             </div>
 
             <!-- Widget Penggunaan Memori -->
             <div class="col-md-4">
                 <h4>Penggunaan Memori</h4>
                 <p><?php echo $serverStats['memUsedMB']; ?> MB / <?php echo $serverStats['memTotalMB']; ?> MB</p>
-                <div class="progress">
-                    <div class="progress-bar" style="width: <?php echo $serverStats['memUsedPercent']; ?>%" role="progressbar" aria-valuenow="<?php echo $serverStats['memUsedPercent']; ?>" aria-valuemin="0" aria-valuemax="100">
-                        <?php echo $serverStats['memUsedPercent']; ?>% digunakan
-                    </div>
-                </div>
+                <canvas id="memChart" width="400" height="400"></canvas>
             </div>
 
             <!-- Widget Penggunaan CPU -->
             <div class="col-md-4">
                 <h4>Penggunaan CPU</h4>
-                <div class="progress">
-                    <div class="progress-bar" style="width: <?php echo $serverStats['cpuLoad']; ?>%" role="progressbar" aria-valuenow="<?php echo $serverStats['cpuLoad']; ?>" aria-valuemin="0" aria-valuemax="100">
-                        <?php echo $serverStats['cpuLoad']; ?>% Load
-                    </div>
-                </div>
+                <canvas id="cpuChart" width="400" height="400"></canvas>
             </div>
         </div>
 
@@ -200,14 +200,101 @@ $serverStats = getServerStats();
 </div>
 
 <script>
-    // Update Jam Digital setiap detik
-    setInterval(function() {
-        var currentTime = new Date();
-        var hours = currentTime.getHours().toString().padStart(2, '0');
-        var minutes = currentTime.getMinutes().toString().padStart(2, '0');
-        var seconds = currentTime.getSeconds().toString().padStart(2, '0');
-        document.getElementById("clock").textContent = hours + ":" + minutes + ":" + seconds;
-    }, 1000);
+    // Data server
+    var serverData = <?php echo json_encode([
+        'cpuLoad' => $serverStats['cpuLoad'],
+        'memUsedPercent' => $serverStats['memUsedPercent'],
+        'diskUsedPercent' => $serverStats['diskUsedPercent']
+    ]); ?>;
+
+    // Grafik Penggunaan Disk
+    var diskCtx = document.getElementById('diskChart').getContext('2d');
+    var diskChart = new Chart(diskCtx, {
+        type: 'line',
+        data: {
+            labels: ['Disk'], // Hanya satu titik waktu
+            datasets: [{
+                label: 'Disk Usage',
+                data: [serverData.diskUsedPercent],
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Grafik Penggunaan Memori
+    var memCtx = document.getElementById('memChart').getContext('1d');
+    var memChart = new Chart(memCtx, {
+        type: 'line',
+        data: {
+            labels: ['Memory'], // Hanya satu titik waktu
+            datasets: [{
+                label: 'Memory Usage',
+                data: [serverData.memUsedPercent],
+                borderColor: '#FF9800',
+                backgroundColor: 'rgba(255, 152, 0, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Grafik Penggunaan CPU
+    var cpuCtx = document.getElementById('cpuChart').getContext('1d');
+    var cpuChart = new Chart(cpuCtx, {
+        type: 'line',
+        data: {
+            labels: ['CPU'], // Hanya satu titik waktu
+            datasets: [{
+                label: 'CPU Load',
+                data: [serverData.cpuLoad],
+                borderColor: '#2196F3',
+                backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Update Jam Digital Setiap Detik
+    function updateClock() {
+        var now = new Date();
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var seconds = now.getSeconds().toString().padStart(2, '0');
+        document.getElementById('clock').innerHTML = hours + ':' + minutes + ':' + seconds;
+    }
+
+    setInterval(updateClock, 1000); // Memperbarui jam setiap detik
 </script>
 
 </body>

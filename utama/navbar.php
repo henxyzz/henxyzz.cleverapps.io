@@ -107,9 +107,12 @@ if (!isset($_SESSION['user_id'])) {
         const menus = document.querySelectorAll('.menu');
         menus.forEach(menu => menu.classList.remove('active'));
         event.currentTarget.classList.add('active');
+
+        // Masuk ke mode fullscreen dan kunci orientasi layar
+        goFullScreen();
     }
 
-    // Fungsi untuk meminta fullscreen secara otomatis ketika halaman dimuat
+    // Fungsi untuk meminta fullscreen secara otomatis
     function goFullScreen() {
         // Mengecek apakah fullscreen tersedia dan jika iya, memasukannya
         if (document.documentElement.requestFullscreen) {
@@ -120,6 +123,13 @@ if (!isset($_SESSION['user_id'])) {
             document.documentElement.webkitRequestFullscreen();
         } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
             document.documentElement.msRequestFullscreen();
+        }
+
+        // Kunci orientasi layar agar tetap vertikal atau sesuai kebutuhan
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(function(error) {
+                console.error("Unable to lock orientation: " + error);
+            });
         }
     }
 

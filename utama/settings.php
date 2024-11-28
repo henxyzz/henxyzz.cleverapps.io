@@ -1,52 +1,50 @@
 <?php
-// Termasuk file konfigurasi database
-include('./config/config.php');
+session_start(); // Memulai sesi jika belum dimulai
 
-// Memulai sesi jika belum dimulai
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Jika pengguna belum login, arahkan ke login.php
+// Cek apakah pengguna sudah login
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
-// Ambil data pengguna dari database
-$stmt = $conn->prepare('SELECT * FROM users WHERE id = ?');
-$stmt->bind_param('i', $_SESSION['user_id']);
+// Koneksi ke database
+include('./config/config.php');
+
+// Mengambil data pengguna dari database
+$userId = $_SESSION['user_id'];
+$sql = "SELECT * FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Logout
-if (isset($_POST['logout'])) {
-    session_unset();
+// Logout logic
+if (isset($_GET['logout'])) {
     session_destroy();
-    header('Location: index.php');
+    header('Location: https://henxyz.cleverapps.io');
     exit();
 }
 
-// Ganti kata sandi
-$error_message = '';
+// Fungsi untuk mengganti password
 if (isset($_POST['change_password'])) {
-    $current_password = $_POST['current_password'];
-    $new_password = $_POST['new_password'];
-    $confirm_password = $_POST['confirm_password'];
+    $currentPassword = $_POST['current_password'];
+    $newPassword = $_POST['new_password'];
 
-    if (password_verify($current_password, $user['password'])) {
-        if ($new_password === $confirm_password) {
-            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare('UPDATE users SET password = ? WHERE id = ?');
-            $stmt->bind_param('si', $hashed_password, $_SESSION['user_id']);
-            $stmt->execute();
-            $success_message = 'Password berhasil diubah.';
-        } else {
-            $error_message = 'Konfirmasi password tidak cocok.';
-        }
+    // Verifikasi password lama
+    if (password_verify($currentPassword, $user['password'])) {
+        // Hash password baru
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        // Update password di database
+        $updateSql = "UPDATE users SET password = ? WHERE id = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        $updateStmt->bind_param('si', $hashedPassword, $userId);
+        $updateStmt->execute();
+
+        $message = "Password berhasil diperbarui!";
     } else {
-        $error_message = 'Kata sandi saat ini salah.';
+        $message = "Password lama salah!";
     }
 }
 ?>
@@ -56,26 +54,83 @@ if (isset($_POST['change_password'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Profil Pengguna</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js">
+    <title>Pengaturan Akun</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Glassmorphism Theme */
+        /* Modern UI Theme */
         body {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 50px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .card {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
             padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .eye-icon {
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+        }
+        input[type="password"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-logout {
+            background-color: #d9534f;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .btn-logout:hover {
+            background-color: #c9302c;
+        }
+        .password-form {
+            display: none;
+            transition: opacity 0.5s ease-in-out;
+            margin-top: 20px;
+        }
+        .password-form.show {
+            display: block;
+            opacity: 1;
+        }
+        #password-text {
+            display: inline-block;
+        }
+        i.fa-eye {
+            cursor: pointer;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -83,68 +138,60 @@ if (isset($_POST['change_password'])) {
 
 <div class="container">
     <div class="card">
-        <h2 class="text-center">Pengaturan Profil</h2>
+        <h2>Pengaturan Akun</h2>
 
-        <!-- Menampilkan pesan error atau sukses -->
-        <?php if (!empty($error_message)): ?>
-            <div class="alert alert-danger"><?php echo $error_message; ?></div>
-        <?php endif; ?>
-        <?php if (isset($success_message)): ?>
-            <div class="alert alert-success"><?php echo $success_message; ?></div>
-        <?php endif; ?>
+        <!-- Pesan jika ada status perubahan password -->
+        <?php if (isset($message)) { echo "<p style='color: red;'>$message</p>"; } ?>
 
-        <h4>Detail Profil</h4>
-        <ul class="list-unstyled">
-            <li><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></li>
-            <li><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></li>
-            <li><strong>Tanggal Pembuatan:</strong> <?php echo date('d M Y', strtotime($user['created_at'])); ?></li>
-        </ul>
+        <!-- Detail Profil -->
+        <h3>Detail Akun</h3>
+        <p>Email: <?php echo $user['email']; ?></p>
+        <p>Password: <span id="password-text"><?php echo $user['password']; ?></span> <i class="fa fa-eye" id="toggle-password" onclick="togglePassword()"></i></p>
 
-        <form method="POST">
-            <h4>Ganti Kata Sandi</h4>
+        <!-- Tombol Ganti Password -->
+        <button id="showPasswordFormBtn" class="btn">Ganti Password</button>
+
+        <!-- Form Ganti Password -->
+        <form method="POST" id="passwordForm" class="password-form">
             <div class="form-group">
-                <label for="current_password">Kata Sandi Saat Ini</label>
-                <input type="password" name="current_password" id="current_password" class="form-control" required>
+                <label for="current_password">Password Lama</label>
+                <input type="password" id="current_password" name="current_password" required>
             </div>
             <div class="form-group">
-                <label for="new_password">Kata Sandi Baru</label>
-                <input type="password" name="new_password" id="new_password" class="form-control" required>
+                <label for="new_password">Password Baru</label>
+                <input type="password" id="new_password" name="new_password" required>
             </div>
             <div class="form-group">
-                <label for="confirm_password">Konfirmasi Kata Sandi Baru</label>
-                <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
+                <button type="submit" name="change_password" class="btn">Perbarui Password</button>
             </div>
-            <button type="submit" name="change_password" class="btn btn-primary">Ganti Kata Sandi</button>
         </form>
 
-        <form method="POST" class="mt-4">
-            <button type="submit" name="logout" class="btn btn-danger">Logout</button>
-        </form>
+        <!-- Tombol Logout -->
+        <a href="?logout=true" class="btn btn-logout">Logout</a>
     </div>
 </div>
 
-<!-- Script untuk melihat/mengubah kata sandi -->
 <script>
-    document.getElementById('current_password').type = 'password';
-    document.getElementById('new_password').type = 'password';
-    document.getElementById('confirm_password').type = 'password';
+    // Fungsi untuk toggle password visibility
+    function togglePassword() {
+        var passwordText = document.getElementById("password-text");
+        var eyeIcon = document.getElementById("toggle-password");
 
-    // Fungsi untuk melihat kata sandi
-    function togglePasswordVisibility(elementId) {
-        var input = document.getElementById(elementId);
-        if (input.type === 'password') {
-            input.type = 'text';
+        if (passwordText.type === "password") {
+            passwordText.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
         } else {
-            input.type = 'password';
+            passwordText.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
         }
     }
 
-    // Menambahkan event untuk ikon mata
-    document.querySelectorAll('.eye-icon').forEach(function (icon) {
-        icon.addEventListener('click', function () {
-            var targetId = icon.getAttribute('data-target');
-            togglePasswordVisibility(targetId);
-        });
+    // Menampilkan form ganti password dengan animasi halus
+    document.getElementById("showPasswordFormBtn").addEventListener("click", function() {
+        var passwordForm = document.getElementById("passwordForm");
+        passwordForm.classList.toggle("show");
     });
 </script>
 
