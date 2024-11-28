@@ -1,7 +1,7 @@
 <?php
 // edit_user.php
 
-include('./config/config.php');
+include('config.php');
 
 // Memulai sesi
 session_start();
@@ -97,4 +97,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </body>
+</html>>
 </html>

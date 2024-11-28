@@ -1,7 +1,7 @@
 <?php
 // admin.php
 
-include('./config/config.php');
+include('config.php');
 
 // Memulai sesi
 session_start();
@@ -135,4 +135,4 @@ $files = array_diff(scandir('public'), array('.', '..'));
         </div>
     </div>
 </body>
-</html></html>
+</html></html>l></html>
