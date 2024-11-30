@@ -59,8 +59,108 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Chat with Media</title>
-    <link rel="stylesheet" href="./style/stylelivechat.css">
+    <title>Live Chat</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Chat container */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        #chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 50px; /* Space for footer */
+        }
+
+        .message {
+            margin-bottom: 10px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .message strong {
+            font-size: 1rem;
+        }
+
+        .message small {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .message p {
+            margin: 5px 0;
+        }
+
+        .media-file {
+            width: 100%;
+            max-width: 200px;
+            margin-top: 10px;
+        }
+
+        /* Footer Live Chat */
+        .footer-chat {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+            color: white;
+            resize: none;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #00ff7f;
+            color: black;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #00e65c;
+        }
+    </style>
 </head>
 <body>
     <div class="chat-container">
@@ -75,7 +175,7 @@ if ($result->num_rows > 0) {
                     <?php endif; ?>
                     <?php if ($msg['file_url']): ?>
                         <p>
-                            <a href="<?php echo htmlspecialchars($msg['file_url']); ?>" target="_blank">
+                            <a href="<?php echo htmlspecialchars($msg['file_url']); ?>" download>
                                 <?php echo htmlspecialchars(basename($msg['file_url'])); ?>
                             </a>
                         </p>
@@ -90,12 +190,18 @@ if ($result->num_rows > 0) {
                 </div>
             <?php endforeach; ?>
         </div>
+
         <form id="chat-form" method="POST" action="" enctype="multipart/form-data">
             <textarea name="message" id="message" placeholder="Type your message..."></textarea>
             <input type="file" name="file" id="file">
             <button type="submit">Send</button>
         </form>
     </div>
+
+    <div class="footer-chat">
+        Live Chat with <?php echo htmlspecialchars($username); ?>
+    </div>
+
     <script>
         // Auto-refresh chatbox tanpa reload halaman
         setInterval(() => {
@@ -104,6 +210,11 @@ if ($result->num_rows > 0) {
                 .then(html => {
                     const chatBox = new DOMParser().parseFromString(html, 'text/html');
                     document.getElementById('chat-box').innerHTML = chatBox.getElementById('chat-box').innerHTML;
+                });
+        }, 3000);
+    </script>
+</body>
+</html>TML;
                 });
         }, 3000);
     </script>

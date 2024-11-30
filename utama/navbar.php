@@ -86,8 +86,9 @@ if (!isset($_SESSION['user_id'])) {
         <span>Home</span>
     </a>
     <a href="#" class="menu" onclick="loadPage(event, 'chatlive.php')">
-        <i class="fa fa-bars icon"></i>
+        <i class="fa fa-comments icon"></i>
         <span>Chat</span>
+    </a>
     <a href="#" class="menu" onclick="loadPage(event, 'menu.php')">
         <i class="fa fa-bars icon"></i>
         <span>Menu</span>
@@ -110,40 +111,8 @@ if (!isset($_SESSION['user_id'])) {
         const menus = document.querySelectorAll('.menu');
         menus.forEach(menu => menu.classList.remove('active'));
         event.currentTarget.classList.add('active');
-
-        // Masuk ke mode fullscreen dan kunci orientasi layar
-        goFullScreen();
-    }
-
-    // Fungsi untuk meminta fullscreen secara otomatis
-    function goFullScreen() {
-        // Mengecek apakah fullscreen tersedia dan jika iya, memasukannya
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) { // Firefox
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari dan Opera
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
-            document.documentElement.msRequestFullscreen();
-        }
-
-        // Kunci orientasi layar agar tetap portrait
-        if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('portrait').catch(function(error) {
-                console.error("Unable to lock orientation: " + error);
-            });
-        }
-    }
-
-    // Meminta fullscreen saat halaman pertama kali dimuat
-    window.onload = function() {
-        goFullScreen();
     }
 </script>
-
-</body>
-</html>cript>
 
 </body>
 </html>
