@@ -40,6 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// Menghapus pesan
+if (isset($_GET['delete_id'])) {
+    $delete_id = (int) $_GET['delete_id'];
+    // Cek jika pesan milik pengguna yang login
+    $stmt = $conn->prepare("DELETE FROM messages WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $delete_id, $user_id);
+    $stmt->execute();
+    $stmt->close();
+    header("Location: chatlive.php");
+    exit;
+}
+
 // Ambil pesan dari database
 $messages = [];
 $result = $conn->query("SELECT messages.id, users.username, messages.message, messages.file_url, messages.created_at 
@@ -71,13 +83,13 @@ if ($result->num_rows > 0) {
             overflow: hidden;
         }
 
-        /* Chat container */
         .chat-container {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
+            justify-content: flex-end;
+            height: calc(100% - 50px);
             padding: 10px;
+            margin-bottom: 50px;
         }
 
         h2 {
@@ -89,7 +101,7 @@ if ($result->num_rows > 0) {
         #chat-box {
             flex-grow: 1;
             overflow-y: auto;
-            padding-bottom: 50px; /* Space for footer */
+            padding-bottom: 70px;
         }
 
         .message {
@@ -97,6 +109,7 @@ if ($result->num_rows > 0) {
             background-color: #333;
             padding: 10px;
             border-radius: 5px;
+            position: relative;
         }
 
         .message strong {
@@ -112,13 +125,23 @@ if ($result->num_rows > 0) {
             margin: 5px 0;
         }
 
+        .message-actions {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            display: none;
+        }
+
+        .message:hover .message-actions {
+            display: inline;
+        }
+
         .media-file {
             width: 100%;
             max-width: 200px;
             margin-top: 10px;
         }
 
-        /* Footer Live Chat */
         .footer-chat {
             position: fixed;
             bottom: 0;
@@ -140,7 +163,7 @@ if ($result->num_rows > 0) {
             background-color: #222;
             color: white;
             resize: none;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         input[type="file"] {
@@ -187,14 +210,21 @@ if ($result->num_rows > 0) {
                             <audio src="<?php echo htmlspecialchars($msg['file_url']); ?>" controls class="media-file"></audio>
                         <?php endif; ?>
                     <?php endif; ?>
+
+                    <?php if ($msg['username'] === $username): ?>
+                        <div class="message-actions">
+                            <a href="edit_message.php?message_id=<?php echo $msg['id']; ?>">Edit</a> | 
+                            <a href="chatlive.php?delete_id=<?php echo $msg['id']; ?>" onclick="return confirm('Apakah kamu yakin ingin menghapus pesan ini?')">Delete</a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>
 
         <form id="chat-form" method="POST" action="" enctype="multipart/form-data">
-            <textarea name="message" id="message" placeholder="Type your message..."></textarea>
+            <textarea name="message" id="message" placeholder="Ketik pesan disini..."></textarea>
             <input type="file" name="file" id="file">
-            <button type="submit">Send</button>
+            <button type="submit">Kirim</button>
         </form>
     </div>
 
@@ -203,18 +233,12 @@ if ($result->num_rows > 0) {
     </div>
 
     <script>
-        // Auto-refresh chatbox tanpa reload halaman
         setInterval(() => {
             fetch('chatlive.php')
                 .then(response => response.text())
                 .then(html => {
                     const chatBox = new DOMParser().parseFromString(html, 'text/html');
                     document.getElementById('chat-box').innerHTML = chatBox.getElementById('chat-box').innerHTML;
-                });
-        }, 3000);
-    </script>
-</body>
-</html>TML;
                 });
         }, 3000);
     </script>

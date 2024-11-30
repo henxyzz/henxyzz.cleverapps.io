@@ -103,9 +103,26 @@ if (isset($_GET['logout'])) {
             display: block;
             opacity: 1;
         }
+        /* Style untuk password dengan blur */
         #password-text {
             display: inline-block;
+            font-family: 'Courier New', Courier, monospace;
+            color: #333;
         }
+
+        #password-text.hidden {
+            text-security: disc;
+            -webkit-text-security: disc;
+            color: transparent;
+            background: rgba(0, 0, 0, 0.1);
+            filter: blur(5px);
+        }
+
+        #password-text.show {
+            color: black;
+            filter: none;
+        }
+
         i.fa-eye {
             cursor: pointer;
             margin-left: 10px;
@@ -126,7 +143,7 @@ if (isset($_GET['logout'])) {
         <p><strong>ID Pengguna:</strong> <?php echo $user['id']; ?></p>
         <p><strong>Username:</strong> <?php echo $user['username']; ?></p>
         <p><strong>Email:</strong> <?php echo $user['email']; ?></p>
-        <p><strong>Password:</strong> <span id="password-text"><?php echo $user['password']; ?></span> 
+        <p><strong>Password:</strong> <span id="password-text" class="hidden"><?php echo $user['password']; ?></span> 
             <i class="fa fa-eye" id="toggle-password" onclick="togglePassword()"></i>
         </p>
         <p><strong>Token:</strong> <?php echo $user['token'] ? $user['token'] : 'Tidak ada token'; ?></p>
@@ -157,17 +174,20 @@ if (isset($_GET['logout'])) {
 </div>
 
 <script>
-    // Fungsi untuk toggle password visibility
+    // Fungsi untuk toggle password visibility dengan blur effect
     function togglePassword() {
         var passwordText = document.getElementById("password-text");
         var eyeIcon = document.getElementById("toggle-password");
 
-        if (passwordText.type === "password") {
-            passwordText.type = "text";
+        // Toggle visibility of password with blur effect
+        if (passwordText.classList.contains("hidden")) {
+            passwordText.classList.remove("hidden");
+            passwordText.classList.add("show");
             eyeIcon.classList.remove("fa-eye");
             eyeIcon.classList.add("fa-eye-slash");
         } else {
-            passwordText.type = "password";
+            passwordText.classList.remove("show");
+            passwordText.classList.add("hidden");
             eyeIcon.classList.remove("fa-eye-slash");
             eyeIcon.classList.add("fa-eye");
         }
@@ -181,5 +201,4 @@ if (isset($_GET['logout'])) {
 </script>
 
 </body>
-</html>body>
 </html>
