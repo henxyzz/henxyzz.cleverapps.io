@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fileName = basename($_FILES['file']['name']);
         $filePath = $uploadDir . uniqid() . "_" . $fileName;
 
+        // Proses upload file dan hitung progres
         if (move_uploaded_file($_FILES['file']['tmp_name'], $filePath)) {
             $file_url = $filePath;
         }
@@ -183,11 +184,41 @@ if ($result->num_rows > 0) {
         button:hover {
             background-color: #00e65c;
         }
+
+        .refresh-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007BFF;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            height: 10px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar .progress {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <h2>Live Chat</h2>
+
+        <!-- Tombol Refresh -->
+        <button class="refresh-btn" onclick="refreshChat()">Refresh</button>
+
         <div id="chat-box">
             <?php foreach (array_reverse($messages) as $msg): ?>
                 <div class="message">
@@ -223,7 +254,10 @@ if ($result->num_rows > 0) {
 
         <form id="chat-form" method="POST" action="" enctype="multipart/form-data">
             <textarea name="message" id="message" placeholder="Ketik pesan disini..."></textarea>
-            <input type="file" name="file" id="file">
+            <input type="file" name="file" id="file" onchange="updateProgress()">
+            <div class="progress-bar" id="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
             <button type="submit">Kirim</button>
         </form>
     </div>
@@ -233,6 +267,48 @@ if ($result->num_rows > 0) {
     </div>
 
     <script>
+        function refreshChat() {
+            location.reload();
+        }
+
+        function updateProgress() {
+            var fileInput = document.getElementById('file');
+            var progressBar = document.getElementById('progress-bar');
+            var progress = document.getElementById('progress');
+            
+            var file = fileInput.files[0];
+            if (!file) return;
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'chatlive.php', true);
+
+            // Update progress bar while uploading
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    var percent = (e.loaded / e.total) * 100;
+                    progress.style.width = percent + '%';
+                }
+            };
+
+            // Handle upload completion
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    // Handle success (optional: update UI or show success message)
+                    console.log('File uploaded successfully');
+                } else {
+                    // Handle failure (optional: display an error)
+                    console.error('Upload failed');
+                }
+            };
+
+            // Prepare the form data and send the request
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('message', document.getElementById('message').value);
+            xhr.send(formData);
+        }
+
+        // Function to refresh chat every 3 seconds
         setInterval(() => {
             fetch('chatlive.php')
                 .then(response => response.text())
