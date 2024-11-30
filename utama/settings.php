@@ -3,7 +3,7 @@ session_start(); // Memulai sesi jika belum dimulai
 
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: ../login.php');
     exit();
 }
 
@@ -22,7 +22,7 @@ $user = $result->fetch_assoc();
 // Logout logic
 if (isset($_GET['logout'])) {
     session_destroy();
-    header('Location: https://henxyz.cleverapps.io');
+    header('Location: ../login.php');
     exit();
 }
 ?>
@@ -181,4 +181,5 @@ if (isset($_GET['logout'])) {
 </script>
 
 </body>
+</html>body>
 </html>

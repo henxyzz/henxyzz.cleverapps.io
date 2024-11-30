@@ -3,7 +3,7 @@ session_start(); // Memulai sesi
 
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php"); // Jika belum login, arahkan ke halaman login
+    header("Location: ../login.php"); // Jika belum login, arahkan ke halaman login
     exit();
 };
 ?>
@@ -85,6 +85,9 @@ if (!isset($_SESSION['user_id'])) {
         <i class="fa fa-home icon"></i>
         <span>Home</span>
     </a>
+    <a href="#" class="menu" onclick="loadPage(event, 'chatlive.php')">
+        <i class="fa fa-bars icon"></i>
+        <span>Chat</span>
     <a href="#" class="menu" onclick="loadPage(event, 'menu.php')">
         <i class="fa fa-bars icon"></i>
         <span>Menu</span>

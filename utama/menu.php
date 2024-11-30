@@ -3,7 +3,7 @@ session_start(); // Memulai sesi
 
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php"); // Jika belum login, arahkan ke halaman login
+    header("Location: ../login.php"); // Jika belum login, arahkan ke halaman login
     exit();
 };
 ?>
@@ -166,6 +166,7 @@ if (!isset($_SESSION['user_id'])) {
             <div class="link-item">
                 <h3>Tools</h3>
                 <button onclick="window.location.href='menu/Other/spam-pairing.php'; incrementButtonClick('Spam pairing');" class="menu-button">Spam pairing</button>
+                <button onclick="window.location.href='menu/Other/ytcut.php'; incrementButtonClick('YT Cutter');" class="menu-button">YT Cutter</button>
             </div>
         </div>
     </div>
