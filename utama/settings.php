@@ -21,8 +21,18 @@ $user = $result->fetch_assoc();
 
 // Logout logic
 if (isset($_GET['logout'])) {
+    // Hapus semua sesi
     session_destroy();
-    header('Location: ../login.php');
+
+    // Hapus semua cookie yang tersedia
+    if (isset($_COOKIE)) {
+        foreach ($_COOKIE as $key => $value) {
+            setcookie($key, '', time() - 3600, '/', '', false, true);
+        }
+    }
+
+    // Redirect ke halaman login
+    header('Location: ../login.php?message=logout_success');
     exit();
 }
 ?>
@@ -35,30 +45,31 @@ if (isset($_GET['logout'])) {
     <title>Pengaturan Akun</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Modern UI Theme */
+        /* Modern UI Dark Theme */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: #121212;
+            color: #f1f1f1;
             padding: 20px;
+            margin: 0;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background: #fff;
+            background: #1e1e1e;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
         .card {
-            background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: #2a2a2a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        h2 {
+        h2, h3 {
             text-align: center;
-            color: #333;
+            color: #ffffff;
         }
         .form-group {
             margin-bottom: 15px;
@@ -66,13 +77,16 @@ if (isset($_GET['logout'])) {
         label {
             display: block;
             font-weight: bold;
+            color: #ffffff;
         }
         input[type="password"], input[type="email"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #444;
             border-radius: 5px;
+            background-color: #1e1e1e;
+            color: #f1f1f1;
         }
         .btn {
             background-color: #007BFF;
@@ -89,7 +103,13 @@ if (isset($_GET['logout'])) {
         .btn-logout {
             background-color: #d9534f;
             margin-top: 20px;
+            display: inline-block;
             text-align: center;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
         .btn-logout:hover {
             background-color: #c9302c;
@@ -103,29 +123,32 @@ if (isset($_GET['logout'])) {
             display: block;
             opacity: 1;
         }
-        /* Style untuk password dengan blur */
         #password-text {
             display: inline-block;
             font-family: 'Courier New', Courier, monospace;
-            color: #333;
+            color: #f1f1f1;
         }
-
         #password-text.hidden {
             text-security: disc;
             -webkit-text-security: disc;
             color: transparent;
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
             filter: blur(5px);
         }
-
         #password-text.show {
-            color: black;
+            color: #f1f1f1;
             filter: none;
         }
-
         i.fa-eye {
             cursor: pointer;
             margin-left: 10px;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -143,7 +166,8 @@ if (isset($_GET['logout'])) {
         <p><strong>ID Pengguna:</strong> <?php echo $user['id']; ?></p>
         <p><strong>Username:</strong> <?php echo $user['username']; ?></p>
         <p><strong>Email:</strong> <?php echo $user['email']; ?></p>
-        <p><strong>Password:</strong> <span id="password-text" class="hidden"><?php echo $user['password']; ?></span> 
+        <p><strong>Password:</strong> 
+            <span id="password-text" class="hidden"><?php echo $user['password']; ?></span> 
             <i class="fa fa-eye" id="toggle-password" onclick="togglePassword()"></i>
         </p>
         <p><strong>Token:</strong> <?php echo $user['token'] ? $user['token'] : 'Tidak ada token'; ?></p>
@@ -169,17 +193,15 @@ if (isset($_GET['logout'])) {
         </form>
 
         <!-- Tombol Logout -->
-        <a href="?logout=true" class="btn btn-logout">Logout</a>
+        <a href="?logout=true" class="btn-logout">Logout</a>
     </div>
 </div>
 
 <script>
-    // Fungsi untuk toggle password visibility dengan blur effect
     function togglePassword() {
         var passwordText = document.getElementById("password-text");
         var eyeIcon = document.getElementById("toggle-password");
 
-        // Toggle visibility of password with blur effect
         if (passwordText.classList.contains("hidden")) {
             passwordText.classList.remove("hidden");
             passwordText.classList.add("show");
@@ -193,7 +215,6 @@ if (isset($_GET['logout'])) {
         }
     }
 
-    // Menampilkan form ganti password dengan animasi halus
     document.getElementById("showPasswordFormBtn").addEventListener("click", function() {
         var passwordForm = document.getElementById("passwordForm");
         passwordForm.classList.toggle("show");

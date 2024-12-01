@@ -1,40 +1,17 @@
 <?php
-// Mendapatkan data statistik server dalam format JSON
-function getServerStats() {
-    // Status Penyimpanan dalam GB
-    $diskFree = disk_free_space("/");
-    $diskTotal = disk_total_space("/");
-    $diskUsed = $diskTotal - $diskFree;
+header('Content-Type: application/json');
+session_start();
 
-    // Menghitung penyimpanan dalam GB
-    $diskUsedGB = round($diskUsed / (1024 * 1024 * 1024), 2);
-    $diskTotalGB = round($diskTotal / (1024 * 1024 * 1024), 2);
-    $diskUsedPercent = round(($diskUsed / $diskTotal) * 100, 2);
-
-    // Penggunaan Memori dalam MB
-    $memTotal = memory_get_usage(true);
-    $memUsed = memory_get_usage();
-
-    // Menghitung penggunaan memori dalam MB
-    $memUsedMB = round($memUsed / 1024 / 1024, 2);
-    $memTotalMB = round($memTotal / 1024 / 1024, 2);
-    $memUsedPercent = round(($memUsed / $memTotal) * 100, 2);
-
-    // CPU Usage
-    $cpuLoad = sys_getloadavg();
-
-    return [
-        'diskUsedGB' => $diskUsedGB,
-        'diskTotalGB' => $diskTotalGB,
-        'diskUsedPercent' => $diskUsedPercent,
-        'memUsedMB' => $memUsedMB,
-        'memTotalMB' => $memTotalMB,
-        'memUsedPercent' => $memUsedPercent,
-        'cpuLoad' => $cpuLoad[0], // Mengambil nilai load rata-rata 1 menit
-    ];
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit();
 }
 
-// Mengembalikan data dalam format JSON
-header('Content-Type: application/json');
-echo json_encode(getServerStats());
+// Simulasi data server
+echo json_encode([
+    'diskUsedPercent' => rand(20, 90),  // Data simulasi untuk penggunaan disk
+    'memUsedPercent' => rand(30, 80),   // Data simulasi untuk penggunaan memori
+    'cpuLoad' => rand(10, 100)          // Data simulasi untuk penggunaan CPU
+]);
 ?>
