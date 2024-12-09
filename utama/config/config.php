@@ -1,10 +1,10 @@
 <?php
 // Konfigurasi database
-$host = "bh6hv9q2mgchpfwokhra-mysql.services.clever-cloud.com";
-$port = "21755"; // Port MySQL (opsional)
-$username = "uilgi5oa7qkxpkd7";
-$password = "zE5zGMZXcqIbTq8oItr";
-$database = "bh6hv9q2mgchpfwokhra";
+$host = "sql102.infinityfree.com";
+$port = "3306"; // Port MySQL (opsional)
+$username = "if0_37877573";
+$password = "megaauliani";
+$database = "if0_37877573_1";
 
 // Membuat koneksi
 $conn = new mysqli($host, $username, $password, $database, $port);
