@@ -142,6 +142,7 @@ if (!isset($_SESSION['user_id'])) {
 
     // Fungsi untuk toggle navbar
     toggleButton.addEventListener('click', () => {
+        console.log('Toggle button clicked'); // Debug log
         navbar.classList.toggle('active');
     });
 
