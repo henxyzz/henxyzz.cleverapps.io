@@ -35,6 +35,28 @@ if (isset($_GET['logout'])) {
     header('Location: ../login.php?message=logout_success');
     exit();
 }
+
+// Proses penggantian password
+if (isset($_POST['change_password'])) {
+    $currentPassword = $_POST['current_password'];
+    $newPassword = $_POST['new_password'];
+
+    // Verifikasi apakah password lama sesuai
+    if ($currentPassword === $user['password']) { // Memeriksa password asli (belum di-hash)
+        // Jika password lama benar, perbarui dengan password baru
+        $updateSql = "UPDATE users SET password = ? WHERE id = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        $updateStmt->bind_param('si', $newPassword, $userId);
+        
+        if ($updateStmt->execute()) {
+            $message = "Password berhasil diperbarui!";
+        } else {
+            $message = "Terjadi kesalahan dalam memperbarui password.";
+        }
+    } else {
+        $message = "Password lama yang Anda masukkan salah.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -181,7 +203,7 @@ if (isset($_GET['logout'])) {
         <p><strong>Username:</strong> <?php echo $user['username']; ?></p>
         <p><strong>Email:</strong> <?php echo $user['email']; ?></p>
         <p><strong>Password:</strong> 
-            <span id="password-text" class="hidden"><?php echo $user['password']; ?></span> 
+            <span id="password-text" class="hidden"><?php echo htmlspecialchars($user['password']); ?></span> 
             <i class="fa fa-eye" id="toggle-password" onclick="togglePassword()"></i>
         </p>
         <p><strong>Token:</strong> <?php echo $user['token'] ? $user['token'] : 'Tidak ada token'; ?></p>

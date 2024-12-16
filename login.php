@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param('si', $token, $user['id']);
             $stmt->execute();
 
-            // Simpan cookie di browser
-            setcookie('remember_me', $token, $expireTime, '/', '', false, true);
+            // Simpan cookie di browser dengan parameter Secure dan HttpOnly
+            setcookie('remember_me', $token, $expireTime, '/', '', isset($_SERVER["HTTPS"]), true);
         }
 
         // Redirect ke dashboard
@@ -88,7 +88,7 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
         $stmt->bind_param('si', $newToken, $user['id']);
         $stmt->execute();
 
-        setcookie('remember_me', $newToken, $expireTime, '/', '', false, true);
+        setcookie('remember_me', $newToken, $expireTime, '/', '', isset($_SERVER["HTTPS"]), true);
 
         // Redirect ke dashboard
         header('Location: loading.php');

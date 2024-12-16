@@ -7,6 +7,11 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Pastikan koneksi database tersedia
+if (!isset($conn)) {
+    die('Koneksi database tidak tersedia.');
+}
+
 // Jika pengguna sudah login melalui session, arahkan ke navbar.php
 if (isset($_SESSION['user_id'])) {
     header('Location: ../utama/navbar.php'); // Path relatif dari folder config ke navbar.php
@@ -18,7 +23,7 @@ if (isset($_COOKIE['remember_me'])) {
     $token = $_COOKIE['remember_me'];
 
     // Validasi token dengan database
-    $stmt = $conn->prepare('SELECT * FROM users WHERE remember_token = ?');
+    $stmt = $conn->prepare('SELECT id, username FROM users WHERE remember_token = ?');
     $stmt->bind_param('s', $token);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -37,7 +42,7 @@ if (isset($_COOKIE['remember_me'])) {
         $stmt->bind_param('si', $newToken, $user['id']);
         $stmt->execute();
 
-        setcookie('remember_me', $newToken, $expireTime, '/', '', false, true);
+        setcookie('remember_me', $newToken, $expireTime, '/', '', isset($_SERVER["HTTPS"]), true); // Menambahkan pengecekan HTTPS dan HttpOnly
 
         // Redirect ke navbar.php
         header('Location: ../utama/navbar.php'); // Path relatif dari folder config ke navbar.php
