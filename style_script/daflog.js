@@ -1,82 +1,79 @@
-/* ---- particles.js config ---- */
-
+// Particle.js Configuration
 particlesJS("particles-js", {
-  "particles": {
-    "number": {
-      "value": 60,
-      "density": {
-        "enable": true,
-        "value_area": 1000
+  particles: {
+    number: {
+      value: 60,
+      density: {
+        enable: true,
+        value_area: 1000
       }
     },
-    "color": {
-      "value":  ["#344455", "#ffffff"]
+    color: {
+      value: ["#344455", "#ffffff"]  // Warna partikel bisa disesuaikan
     },
-    "shape": {
-      "type": "edge",
-      "stroke": {
-        "width": 0,
-        "color": "#000000"
+    shape: {
+      type: "edge",
+      stroke: {
+        width: 0,
+        color: "#000000"
       },
-      "polygon": {
-        "nb_sides": 5
+      polygon: {
+        nb_sides: 5
       },
-      "image": {
-        "src": "img/github.svg",
-        "width": 100,
-        "height": 100
+      image: {
+        src: "img/github.svg", // Gambar partikel jika dibutuhkan
+        width: 100,
+        height: 100
       }
     },
-    "opacity": {
-      "value": 0.5,
-      "random": false,
-      "anim": {
-        "enable": false,
-        "speed": 1,
-        "opacity_min": 0.1,
-        "sync": false
+    opacity: {
+      value: 0.5,
+      random: false,
+      anim: {
+        enable: false,
+        speed: 1,
+        opacity_min: 0.1,
+        sync: false
       }
     },
-    "size": {
-      "value": 4,
-      "random": true,
-      "anim": {
-        "enable": false,
-        "speed": 40,
-        "size_min": 0.1,
-        "sync": false
+    size: {
+      value: 4,
+      random: true,
+      anim: {
+        enable: false,
+        speed: 40,
+        size_min: 0.1,
+        sync: false
       }
     },
-    "line_linked": {
-      "enable": true,
-      "distance": 50,
-      "color": "#fff",
-      "opacity": 0.5,
-      "width": 1
+    line_linked: {
+      enable: true,
+      distance: 50,
+      color: "#fff",
+      opacity: 0.5,
+      width: 1
     },
-    "move": {
-      "enable": true,
-      "speed": 3,
-      "direction": "none",
-      "random": false,
-      "straight": false,
-      "out_mode": "out",
-      "bounce": false,
-      "attract": {
-        "enable": false,
-        "rotateX": 600,
-        "rotateY": 1200
+    move: {
+      enable: true,
+      speed: 3,
+      direction: "none",
+      random: false,
+      straight: false,
+      out_mode: "out",
+      bounce: false,
+      attract: {
+        enable: false,
+        rotateX: 600,
+        rotateY: 1200
       }
     }
   },
-  "retina_detect": true
+  retina_detect: true
 });
 
-
-/* ---- stats.js config ---- */
-
+// Stats.js Configuration (optional to monitor particle count)
 var count_particles, stats, update;
-stats = new Stats;
+stats = new Stats();
 stats.setMode(0);
 stats.domElement.style.position = 'absolute';
 stats.domElement.style.left = '0px';
@@ -92,3 +89,16 @@ update = function() {
   requestAnimationFrame(update);
 };
 requestAnimationFrame(update);
+
+// CPU Path Animation (Optional JS for additional interactivity)
+const cpuPath = document.querySelector('.cpu-path');
+
+cpuPath.addEventListener('mouseenter', () => {
+  // Animasi interaksi saat mouse memasuki jalur CPU
+  cpuPath.style.animationPlayState = 'paused';
+});
+
+cpuPath.addEventListener('mouseleave', () => {
+  // Mengembalikan animasi ke gerakan berputar saat mouse meninggalkan jalur CPU
+  cpuPath.style.animationPlayState = 'running';
+});

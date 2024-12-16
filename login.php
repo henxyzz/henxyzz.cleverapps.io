@@ -148,7 +148,7 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
             </form>
         </div>
         <h4 class="text-center">
-            <a target="_blank" href="">PORTAL AI</a>
+            <a target="_blank" href="">HEXA AI</a>
         </h4>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

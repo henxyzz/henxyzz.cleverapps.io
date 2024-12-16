@@ -5,11 +5,11 @@ html {
 }
 
 body {
-  background: #f2f2f2;
+  background: #1a1a1a; /* Latar belakang gelap */
   font-family: 'Varela', sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  color: #333;
+  color: #ddd; /* Teks lebih terang */
   min-height: 100%;
   position: relative;
 }
@@ -20,12 +20,13 @@ label {
 }
 
 a {
-  color: #fff;
+  color: #00ffcc; /* Warna link neon cyan */
 }
 
 a:focus,
 a:hover {
-  color: #008080;
+  color: #ffff00; /* Neon kuning saat hover */
+  text-decoration: underline;
 }
 
 .checkbox-inline+.checkbox-inline,
@@ -36,14 +37,14 @@ a:hover {
 /******* Login Page *******/
 
 body.login {
-  background: rgba(241, 242, 181, 1);
-  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 1) 0%, rgba(19, 80, 88, 1) 100%);
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(19, 80, 88, 1)));
-  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 1) 0%, rgba(19, 80, 88, 1) 100%);
-  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 1) 0%, rgba(19, 80, 88, 1) 100%);
-  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 1) 0%, rgba(19, 80, 88, 1) 100%);
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(19, 80, 88, 1) 100%);
-  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#f1f2b5', endColorstr='#135058', GradientType=1);
+  background: linear-gradient(135deg, #0d1b2a 0%, #1c2b3c 100%);
+  background: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 1) 0%, rgba(0, 255, 255, 1) 100%);
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(0, 0, 0, 1)), color-stop(100%, rgba(0, 255, 255, 1)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 1) 0%, rgba(0, 255, 255, 1) 100%);
+  background: -o-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 1) 0%, rgba(0, 255, 255, 1) 100%);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 1) 0%, rgba(0, 255, 255, 1) 100%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 255, 255, 1) 100%);
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#00FFFF', GradientType=1);
 }
 
 .relative {
@@ -67,9 +68,9 @@ body.login {
   width: 25%;
   left: 37.5%;
   border-radius: 50%;
-  background-color: #344455;
+  background-color: #1e1e1e;
   padding: 25px;
-  box-shadow: 0px 0px 9px 2px #344454;
+  box-shadow: 0px 0px 9px 2px #00ffcc, 0px 0px 9px 5px rgba(0, 255, 204, 0.3);
 }
 
 .login-container-wrapper {
@@ -77,8 +78,8 @@ body.login {
   margin: 10% auto 8%;
   padding: 40px;
   box-sizing: border-box;
-  background: rgba(57, 89, 116, 0.8);
-  box-shadow: 1px 1px 10px 1px #000000, 8px 8px 0px 0px #344454, 12px 12px 10px 0px #000000;
+  background: rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 10px 1px #000000, 8px 8px 0px 0px #1e1e1e, 12px 12px 10px 0px #000000;
   position: relative;
   padding-top: 80px;
 }
@@ -86,9 +87,11 @@ body.login {
 .logo .fa {
   font-size: 50px;
 }
-.login input:focus + .fa{
-  color:#fff;
+
+.login input:focus + .fa {
+  color: #00ffcc;
 }
+
 .login-form .form-group {
   margin-right: 0;
   margin-left: 0;
@@ -111,23 +114,23 @@ body.login {
 .login input[type="email"],
 .login input[type="password"],
 .login input:focus {
-  background-color: rgba(40, 52, 67, 0.75);
+  background-color: rgba(30, 30, 30, 0.8);
   border: 1px solid #4a525f;
   color: #eee;
-  border-left: 4px solid #93a5ab;
+  border-left: 4px solid #00ffcc;
 }
 
 .login input:focus {
-  border-left: 4px solid #ccd8da;
+  border-left: 4px solid #ffff00; /* Neon kuning saat fokus */
 }
 
 input:-webkit-autofill,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
-  background-color: rgba(40, 52, 67, 0.75)!important;
+  background-color: rgba(30, 30, 30, 0.8)!important;
   background-image: none;
-  color: rgb(0, 0, 0);
-  border-color: #FAFFBD;
+  color: rgb(0, 255, 255);
+  border-color: #ffff00;
 }
 
 .login .checkbox label,
@@ -140,7 +143,7 @@ select:-webkit-autofill {
   background-image: none;
   padding: 8px 50px;
   border-radius: 0;
-  border: 2px solid #93a5ab;
+  border: 2px solid #00ffcc;
   box-shadow: inset 0 0 0 0 #7692A7;
   -webkit-transition: all ease 0.8s;
   -moz-transition: all ease 0.8s;
@@ -152,14 +155,37 @@ select:-webkit-autofill {
 .btn-success.active,
 .btn-success:active {
   background-color: transparent;
-  border-color: #fff;
-  box-shadow: inset 0 0 100px 0 #7692A7;
+  border-color: #ffff00; /* Neon kuning saat hover */
+  box-shadow: inset 0 0 100px 0 #ffff00;
   color: #FFF;
 }
+
 #particles-js {
-/*   background: cornflowerblue; */
-  width:100%;
-  height:100%;
-  position:absolute;
-  z-index:-1;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+}
+
+/* Jalur CPU Kuning */
+.cpu-path {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  background: transparent;
+  border: 2px solid #ffff00; /* Jalur CPU berwarna kuning */
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(255, 255, 0, 0.5); /* Efek cahaya kuning */
+  animation: cpu-path-animation 3s infinite;
+}
+
+@keyframes cpu-path-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg); /* Gerakan rotasi */
+  }
 }

@@ -42,7 +42,7 @@ if (isset($_GET['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengaturan Akun</title>
+    <title>Pengaturan Akun - Sistem</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* Modern UI Dark Theme */
@@ -114,6 +114,20 @@ if (isset($_GET['logout'])) {
         .btn-logout:hover {
             background-color: #c9302c;
         }
+        .btn-panel {
+            background-color: #28a745;
+            margin-top: 20px;
+            display: inline-block;
+            text-align: center;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-panel:hover {
+            background-color: #218838;
+        }
         .password-form {
             display: none;
             transition: opacity 0.5s ease-in-out;
@@ -156,7 +170,7 @@ if (isset($_GET['logout'])) {
 
 <div class="container">
     <div class="card">
-        <h2>Pengaturan Akun</h2>
+        <h2>Sistem Pengaturan Akun</h2>
 
         <!-- Pesan jika ada status perubahan password -->
         <?php if (isset($message)) { echo "<p style='color: red;'>$message</p>"; } ?>
@@ -194,6 +208,8 @@ if (isset($_GET['logout'])) {
 
         <!-- Tombol Logout -->
         <a href="?logout=true" class="btn-logout">Logout</a>
+        <!-- Tombol Control Panel -->
+        <a href="control/admin.php" class="btn-panel">Control Panel</a>
     </div>
 </div>
 
